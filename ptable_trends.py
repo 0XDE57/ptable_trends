@@ -125,7 +125,7 @@ def ptable_plotter(
         ValueError("Invalid color map.")
 
     # Define number of and groups
-    period_label = ["1", "2", "3", "4", "5", "6", "7"]
+    period_label = ["1", "2", "3", "4", "5", "6", "blank1", "7"]
     group_range = [str(x) for x in range(1, 19)]
 
     # Remove any groups or periods
@@ -167,6 +167,8 @@ def ptable_plotter(
             count += 1
 
     # Define matplotlib and bokeh color map
+    low = 0  # min(data)
+    high = 1  # max(data)
     if log_scale:
         for datum in data:
             if datum < 0:
@@ -174,20 +176,21 @@ def ptable_plotter(
                     f"Entry for element {datum} is negative but log-scale is selected"
                 )
         color_mapper = LogColorMapper(
-            palette=bokeh_palette, low=min(data), high=max(data)
+            palette=bokeh_palette, low=low, high=high
         )
-        norm = LogNorm(vmin=min(data), vmax=max(data))
+        norm = LogNorm(vmin=low, vmax=high)
     else:
         color_mapper = LinearColorMapper(
-            palette=bokeh_palette, low=min(data), high=max(data)
+            palette=bokeh_palette, low=low, high=high
         )
-        norm = Normalize(vmin=min(data), vmax=max(data))
+        norm = Normalize(vmin=low, vmax=high)
     color_scale = ScalarMappable(norm=norm, cmap=cmap).to_rgba(data, alpha=None)
 
     # Set blank color
     color_list = [blank_color] * len(elements)
 
     # Compare elements in dataset with elements in periodic table
+    custom_data = {}
     for i, data_element in enumerate(data_elements):
         element_entry = elements.symbol[
             elements.symbol.str.lower() == data_element.lower()
@@ -195,7 +198,14 @@ def ptable_plotter(
         if element_entry.empty == False:
             element_index = element_entry.index[0]
         else:
-            warnings.warn("Invalid chemical symbol: " + data_element)
+            #warnings.warn("Invalid chemical symbol: " + data_element)
+            # element not found so parse it as our own data (so4, ph, conductivity, etc). override data is formatted as:
+            #   data#element,value
+            #   pH#87,1
+            data = data_element.split('#')
+            element_index_override = int(data[1]) - 1
+            element_index = element_index_override
+            custom_data[str(element_index_override)] = data[0]
         if color_list[element_index] != blank_color:
             warnings.warn("Multiple entries for element " + data_element)
         elif under_value is not None and data[i] <= under_value:
@@ -220,6 +230,13 @@ def ptable_plotter(
             type_color=color_list,
         )
     )
+
+    # replace symbols with our custom data
+    # eg: source.data["sym"][86] = "ph"
+    for item in custom_data:
+        print(str(item) + " -> " + custom_data[item])
+        source.data["sym"][int(item)] = ""  # remove symbol
+        source.data["atomic_number"][int(item)] = custom_data[item]  # override atomic number with data name
 
     # Plot the periodic table
     p = figure(x_range=group_range, y_range=list(reversed(period_label)), tools="save")
