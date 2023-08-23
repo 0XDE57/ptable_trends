@@ -1,3 +1,4 @@
+from bokeh.colors import RGB
 from bokeh.models import (
     ColumnDataSource,
     LinearColorMapper,
@@ -10,6 +11,8 @@ from bokeh.io import show as show_, export_png
 from bokeh.sampledata.periodic_table import elements
 from bokeh.transform import dodge
 from csv import reader
+
+from matplotlib import cm
 from matplotlib.colors import Normalize, LogNorm, to_hex
 from matplotlib.cm import (
     plasma,
@@ -19,6 +22,7 @@ from matplotlib.cm import (
     cividis,
     turbo,
     ScalarMappable,
+    RdBu
 )
 from pandas import options
 from typing import List
@@ -31,7 +35,7 @@ def ptable_plotter(
     output_filename: str = None,
     width: int = 1050,
     cmap: str = "plasma",
-    alpha: float = 0.65,
+    alpha: float = 1,
     extended: bool = True,
     periods_remove: List[int] = None,
     groups_remove: List[int] = None,
@@ -121,6 +125,11 @@ def ptable_plotter(
     elif cmap == "turbo":
         cmap = turbo
         bokeh_palette = "Turbo256"
+    elif cmap == "coolwarm":
+        cmap = RdBu
+        m_coolwarm_rgb = (255 * cm.coolwarm(range(256))).astype('int')
+        coolwarm_palette = [RGB(*tuple(rgb)).to_hex() for rgb in m_coolwarm_rgb]
+        bokeh_palette = coolwarm_palette
     else:
         ValueError("Invalid color map.")
 

@@ -34,9 +34,9 @@ for filename in os.listdir(input_folder):
         image_name = filename.split(".")[0] + ".png"
         output_path = os.path.join(output_folder, image_name)
         print("processing: " + input_path + " >>> " + image_name)
-        
+
         # generate PNG from CSV file
-        ptable_plotter(filename=input_path, extended=False, cmap="inferno", output_filename=output_path)
+        ptable_plotter(filename=input_path, extended=False, cmap="coolwarm", output_filename=output_path)
 
         # draw rectangle to blank out unused elements at end of highjacked row
         draw_rectangle(output_path, output_path, 380, 500, 582, 100)
