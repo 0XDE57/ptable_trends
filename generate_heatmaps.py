@@ -1,30 +1,42 @@
+import os
+
+from PIL import Image, ImageDraw
+
 from ptable_trends import ptable_plotter
 
 # row [87-118] are highjacked for custom values (so4, ph, conductivity, etc)
-#
+# ptable_plotter(filename="AOSTRA_KM9_median.csv", extended=False, cmap="inferno")
 
-# file = "AOSTRA_KM9_median.csv"
-# file = "BM11_median.csv"
-# file = "Crane_Lake_median.csv"
-# file = "Dragonfly_median.csv"
-# file = "Ft_Mkay_1_median.csv"
-# file = "Ft_Mkay_2_median.csv"
-# file = "Gateway_median.csv"
-# file = "HATS5_median.csv"
-# file = "High_Sulfate_median.csv"
-# file = "Jenny_median.csv"
-# file = "Jetliner_median.csv"
-# file = "JP302_median.csv"
-# file = "JP311_median.csv"
-# file = "Linus_median.csv"
-# file = "Maqua_median.csv"
-# file = "NE7_median.csv"
-# file = "Pat_median.csv"
-# file = "Poplar_Marsh_median.csv"
-# file = "Ruth_Lake_median.csv"
-# file = "La_Saline_median.csv"
-# file = "Tower_median.csv"
-file = "WF4_median.csv"
 
-ptable_plotter(filename=file, extended=False, cmap="inferno")
+def draw_rectangle(input_path, output_path, x, y, width, height):
+    image = Image.open(input_path)
+    image = image.convert("RGBA")
+    draw = ImageDraw.Draw(image)
 
+    rectangle_color = (255, 255, 255, 255)
+    draw.rectangle([x, y, x + width, y + height], fill=rectangle_color)
+
+    image.save(output_path, "PNG")
+    print("modified: " + output_path)
+
+
+current_directory = os.getcwd()
+input_folder = current_directory + "/data/"
+
+# create images folder
+output_folder = input_folder + "images/"
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+for filename in os.listdir(input_folder):
+    if filename.endswith(".csv"):
+        input_path = os.path.join(input_folder, filename)
+        image_name = filename.split(".")[0] + ".png"
+        output_path = os.path.join(output_folder, image_name)
+        print("processing: " + input_path + " >>> " + image_name)
+        
+        # generate PNG from CSV file
+        ptable_plotter(filename=input_path, extended=False, cmap="inferno", output_filename=output_path)
+
+        # draw rectangle to blank out unused elements at end of highjacked row
+        draw_rectangle(output_path, output_path, 380, 500, 582, 100)
