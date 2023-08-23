@@ -244,7 +244,7 @@ def ptable_plotter(
     p.outline_line_color = None
     p.background_fill_color = None
     p.border_fill_color = None
-    p.toolbar_location = "above"
+    p.toolbar_location = None
     p.rect("group", "period", 0.9, 0.9, source=source, alpha=alpha, color="type_color")
     p.axis.visible = False
     text_props = {
