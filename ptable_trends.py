@@ -22,7 +22,7 @@ from matplotlib.cm import (
     cividis,
     turbo,
     ScalarMappable,
-    RdBu
+    coolwarm
 )
 from pandas import options
 from typing import List
@@ -126,7 +126,7 @@ def ptable_plotter(
         cmap = turbo
         bokeh_palette = "Turbo256"
     elif cmap == "coolwarm":
-        cmap = RdBu
+        cmap = coolwarm
         m_coolwarm_rgb = (255 * cm.coolwarm(range(256))).astype('int')
         coolwarm_palette = [RGB(*tuple(rgb)).to_hex() for rgb in m_coolwarm_rgb]
         bokeh_palette = coolwarm_palette
