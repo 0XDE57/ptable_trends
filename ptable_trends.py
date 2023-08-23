@@ -6,7 +6,7 @@ from bokeh.models import (
     BasicTicker,
 )
 from bokeh.plotting import figure, output_file
-from bokeh.io import show as show_
+from bokeh.io import show as show_, export_png
 from bokeh.sampledata.periodic_table import elements
 from bokeh.transform import dodge
 from csv import reader
@@ -149,9 +149,9 @@ def ptable_plotter(
     if len(data) != len(data_elements):
         raise ValueError("Unequal number of atomic elements and data points")
 
-    period_label.append("blank")
-    period_label.append("La")
-    period_label.append("Ac")
+    # period_label.append("blank")
+    # period_label.append("La")
+    # period_label.append("Ac")
 
     if extended:
         count = 0
@@ -283,10 +283,12 @@ def ptable_plotter(
     p.add_layout(color_bar, "right")
     p.grid.grid_line_color = None
 
-    if output_filename:
-        output_file(output_filename)
+    #if output_filename:
+    #    output_file(output_filename)
 
-    if show:
-        show_(p)
+    export_png(p, filename=output_filename)
+
+    #if show:
+    #    show_(p)
 
     return p
