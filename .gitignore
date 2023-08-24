@@ -5,4 +5,5 @@ ptable_trends\.html
 
 *.ipynb
 *.idea
-data/images/
+water_data/images/
+tadpole_data/images/
