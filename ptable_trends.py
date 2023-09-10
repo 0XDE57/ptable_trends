@@ -43,7 +43,7 @@ def ptable_plotter(
     cbar_height: float = None,
     cbar_standoff: int = 12,
     cbar_fontsize: int = 14,
-    blank_color: str = "#c4c4c4",
+    blank_color: str = "#FFFFFF",
     under_value: float = None,
     under_color: str = "#140F0E",
     over_value: float = None,
